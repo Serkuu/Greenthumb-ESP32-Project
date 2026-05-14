@@ -21,7 +21,7 @@ export class AuthService {
         },
       });
 
-      const { hash: _, ...userWithoutHash } = user;
+      const { hash: temp, ...userWithoutHash } = user;
       return userWithoutHash;
 
     } catch (error) {

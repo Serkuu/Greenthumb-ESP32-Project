@@ -21,11 +21,4 @@ export class AuthController {
     login(@Body() dto: AuthDto) {
         return this.authService.login(dto);
     }
-
-    @UseGuards(JwtGuard)
-    @Get('test-ochrony')
-    testTokena(@Req() req) {
-        return { message: "Witaj w pokoju VIP!", profil: req.user };
-    }
-
 }
