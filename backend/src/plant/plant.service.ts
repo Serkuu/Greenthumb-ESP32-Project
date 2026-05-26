@@ -15,7 +15,7 @@ export class PlantService {
         }
       });
       if (!garden) {
-        throw new NotFoundException("Ogród nie został znaleziony lub brak dostępu");
+        throw new NotFoundException("Garden not found or access denied");
       }
     }
     return this.prisma.plant.create({
@@ -51,7 +51,7 @@ export class PlantService {
       }
     });
     if (!plant) {
-      throw new NotFoundException("Roślina nie została znaleziona lub brak dostępu");
+      throw new NotFoundException("Plant not found or access denied");
     }
     return this.prisma.plant.update({
       where: {
@@ -71,7 +71,7 @@ export class PlantService {
       }
     });
     if (!plant) {
-      throw new NotFoundException("Roślina nie została znaleziona lub brak dostępu");
+      throw new NotFoundException("Plant not found or access denied");
     }
     return this.prisma.plant.delete({
       where: {

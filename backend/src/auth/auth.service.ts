@@ -27,7 +27,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new ForbiddenException("Użytkownik o takim adresie email już istnieje");
+          throw new ForbiddenException("User with this email already exists");
         }
       }
       throw error;
@@ -41,13 +41,13 @@ export class AuthService {
       },
     });
     if (!user) {
-      throw new ForbiddenException("Błędne dane logowania");
+      throw new ForbiddenException("Wrong login data");
     }
 
     const pwMatches = await bcrypt.compare(dto.password, user.hash);
 
     if (!pwMatches) {
-      throw new ForbiddenException("Błędne dane logowania");
+      throw new ForbiddenException("Wrong login data");
     }
 
     const payload = { sub: user.id, email: user.email };
@@ -55,5 +55,4 @@ export class AuthService {
     const token = await this.jwt.signAsync(payload);
     return { access_token: token };
   }
-
 }

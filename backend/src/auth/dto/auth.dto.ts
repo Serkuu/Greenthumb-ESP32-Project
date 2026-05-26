@@ -9,7 +9,7 @@ export class AuthDto {
   @IsNotEmpty()
   @MinLength(6, { message: 'Password must be at least 6 characters long' })
   @MaxLength(20, { message: 'Password must be at most 20 characters long' })
-  @Matches(/(?=.*[A-Z])(?=.*\d)/, { message: 'Hasło musi zawierać przynajmniej jedną dużą literę i cyfrę' })
+  @Matches(/(?=.*[A-Z])(?=.*\d)/, { message: 'Password must contain at least one uppercase letter and one number' })
   password: string;
 
   @IsString()

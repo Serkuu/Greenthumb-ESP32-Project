@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now())
-  email     String     @unique
+  id        Int              @id @default(autoincrement())
+  createdAt DateTime         @default(now())
+  email     String           @unique
   name      String
   hash      String
   gardens   Garden[]
   plants    Plant[]
   headUnit  HeadUnit[]
+  sensors   MoistureSensor[]
 }
 
 model Garden {
@@ -24,7 +25,7 @@ model Garden {
   updatedAt  DateTime  @updatedAt
   gardenName String
   user       User      @relation(fields: [userId], references: [id])
-  userId     Int
+  userId     Int       
   plants     Plant[]
   headUnit   HeadUnit?
 }
@@ -45,9 +46,9 @@ model Plant {
   optimalMoistureLevel   Int?
   isToxicToPets          Boolean?
   garden                 Garden?         @relation(fields: [gardenId], references: [id])
-  gardenId               Int?
+  gardenId               Int?            
   user                   User            @relation(fields: [userId], references: [id])
-  userId                 Int
+  userId                 Int             
   sensor                 MoistureSensor?
 }
 
@@ -56,8 +57,10 @@ model MoistureSensor {
   createdAt  DateTime          @default(now())
   updatedAt  DateTime          @updatedAt
   macAddress String            @unique
-  plant      Plant             @relation(fields: [plantId], references: [id])
-  plantId    Int               @unique
+  user       User              @relation(fields: [userId], references: [id])
+  userId     Int               
+  plant      Plant?            @relation(fields: [plantId], references: [id])
+  plantId    Int?              @unique
   history    MoistureHistory[]
 }
 

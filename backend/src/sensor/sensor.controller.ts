@@ -1,0 +1,50 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { SensorService } from './sensor.service';
+import { CreateSensorDto } from './dto/create-sensor.dto';
+import { UpdateSensorDto } from './dto/update-sensor.dto';
+import { GetUser } from '../auth/decorators/get-user.decorator';
+import { JwtGuard } from '../auth/guard/jwt.guard';
+import { UseGuards } from '@nestjs/common';
+import { ApiKeyGuard } from './guard/api-key/api-key.guard';
+import { TelemetryPingDto } from './dto/telemetry-ping.dto';
+
+@Controller('sensor')
+export class SensorController {
+  constructor(private readonly sensorService: SensorService) { }
+
+  @UseGuards(JwtGuard)
+  @Post()
+  create(@Body() createSensorDto: CreateSensorDto, @GetUser('userId') userId: number) {
+    return this.sensorService.create(createSensorDto, userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get()
+  findAll(@GetUser('userId') userId: number) {
+    return this.sensorService.findAll(userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get(':id')
+  findOne(@Param('id') id: string, @GetUser('userId') userId: number) {
+    return this.sensorService.findOne(+id, userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSensorDto: UpdateSensorDto, @GetUser('userId') userId: number) {
+    return this.sensorService.update(+id, updateSensorDto, userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':id')
+  remove(@Param('id') id: string, @GetUser('userId') userId: number) {
+    return this.sensorService.remove(+id, userId);
+  }
+
+  @UseGuards(ApiKeyGuard)
+  @Post('telemetry')
+  saveTelemetry(@Body() telemetryPingDto: TelemetryPingDto) {
+    return this.sensorService.saveTelemetry(telemetryPingDto);
+  }
+}
