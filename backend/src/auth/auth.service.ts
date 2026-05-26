@@ -1,6 +1,7 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto } from './dto/auth.dto';
+import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
@@ -34,7 +35,7 @@ export class AuthService {
     }
   }
 
-  async login(dto: AuthDto) {
+  async login(dto: LoginDto) {
     const user = await this.prisma.user.findUnique({
       where: {
         email: dto.email,
