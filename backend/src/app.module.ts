@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GardenModule } from './garden/garden.module';
 import { PlantModule } from './plant/plant.module';
 import { SensorModule } from './sensor/sensor.module';
+import { HeadUnitModule } from './head-unit/head-unit.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { SensorModule } from './sensor/sensor.module';
     PrismaModule,
     GardenModule,
     PlantModule,
-    SensorModule
+    SensorModule,
+    HeadUnitModule
   ],
   controllers: [AppController],
   providers: [AppService],

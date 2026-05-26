@@ -5,7 +5,7 @@ import { UpdateSensorDto } from './dto/update-sensor.dto';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { JwtGuard } from '../auth/guard/jwt.guard';
 import { UseGuards } from '@nestjs/common';
-import { ApiKeyGuard } from './guard/api-key/api-key.guard';
+import { ApiKeyGuard } from '../auth/guard/api-key/api-key.guard';
 import { TelemetryPingDto } from './dto/telemetry-ping.dto';
 
 @Controller('sensor')

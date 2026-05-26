@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 @Injectable()
 export class SensorService {
   constructor(private prisma: PrismaService) { }
+
   async create(createSensorDto: CreateSensorDto, userId: number) {
     if (createSensorDto.plantId) {
       const plant = await this.prisma.plant.findFirst({
