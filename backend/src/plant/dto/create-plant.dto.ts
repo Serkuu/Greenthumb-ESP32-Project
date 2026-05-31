@@ -20,4 +20,23 @@ export class CreatePlantDto {
     @IsOptional()
     @IsString()
     plantDescription: string;
+
+    @IsOptional()
+    @IsString()
+    imageUrl: string;
+
+    @IsOptional()
+    @IsString()
+    sunlightPreference: string;
+
+    @IsOptional()
+    @IsInt()
+    wateringIntervalSummer: number;
+
+    @IsOptional()
+    @IsInt()
+    wateringIntervalWinter: number;
+
+    @IsOptional()
+    isToxicToPets: boolean;
 }

@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { PlantService } from './plant.service';
 import { CreatePlantDto } from './dto/create-plant.dto';
 import { UpdatePlantDto } from './dto/update-plant.dto';
+import { IdentifyPlantDto } from './dto/identify-plant.dto';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { JwtGuard } from '../auth/guard/jwt.guard';
 import { UseGuards } from '@nestjs/common';
@@ -14,6 +15,11 @@ export class PlantController {
   @Post()
   create(@Body() createPlantDto: CreatePlantDto, @GetUser('userId') userId: number) {
     return this.plantService.create(createPlantDto, userId);
+  }
+
+  @Post('identify')
+  identify(@Body() identifyDto: IdentifyPlantDto) {
+    return this.plantService.identifyPlant(identifyDto.base64Image);
   }
 
   @Get()

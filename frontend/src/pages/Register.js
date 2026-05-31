@@ -28,7 +28,6 @@ function Register() {
         throw new Error(errorMessage || 'Wystąpił błąd podczas rejestracji.');
       }
 
-      alert('Konto zostało pomyślnie utworzone! Możesz się teraz zalogować.');
       navigate('/login');
 
     } catch (err) {
