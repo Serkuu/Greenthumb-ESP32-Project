@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Button from '../components/Button';
 import DeviceAssignModal from '../components/DeviceAssignModal';
+import XiaoEsp32 from '../components/XiaoEsp32';
+import EspDevboard from '../components/EspDevboard';
 
 function Dashboard() {
   const [gardens, setGardens] = useState([]);
@@ -15,6 +17,8 @@ function Dashboard() {
   const [scannedDeviceType, setScannedDeviceType] = useState('');
   const [scannedMacAddress, setScannedMacAddress] = useState('');
   const [gattServer, setGattServer] = useState(null);
+  const [sensors, setSensors] = useState([]);
+  const [headUnits, setHeadUnits] = useState([]);
 
   useEffect(() => {
     const fetchGardens = async () => {
@@ -25,24 +29,40 @@ function Dashboard() {
       }
 
       try {
-        const response = await fetch((process.env.REACT_APP_API_URL || 'http://localhost:3000') + '/garden', {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+        const [gardenRes, sensorRes, headUnitRes] = await Promise.all([
+          fetch((process.env.REACT_APP_API_URL || 'http://localhost:3000') + '/garden', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch((process.env.REACT_APP_API_URL || 'http://localhost:3000') + '/sensor', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch((process.env.REACT_APP_API_URL || 'http://localhost:3000') + '/head-unit', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+        ]);
 
-        if (response.status === 401) {
+        if (gardenRes.status === 401 || sensorRes.status === 401 || headUnitRes.status === 401) {
           localStorage.removeItem('access_token');
           navigate('/login');
           return;
         }
 
-        if (!response.ok) {
-          throw new Error('Nie udało się pobrać danych z serwera.');
+        if (!gardenRes.ok) {
+          throw new Error('Nie udało się pobrać ogrodów z serwera.');
         }
 
-        const data = await response.json();
-        setGardens(data);
+        const gardensData = await gardenRes.json();
+        setGardens(gardensData);
+
+        if (sensorRes.ok) {
+          const sensorsData = await sensorRes.json();
+          setSensors(sensorsData);
+        }
+
+        if (headUnitRes.ok) {
+          const headUnitsData = await headUnitRes.json();
+          setHeadUnits(headUnitsData);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -196,6 +216,100 @@ function Dashboard() {
             <span style={{ fontSize: '20px', marginRight: '8px' }}></span> Szukaj daisySensor
           </Button>
         </div>
+
+        {(sensors.length > 0 || headUnits.length > 0) && (
+          <div style={{ marginTop: '48px' }}>
+            <h3 style={{ fontSize: '22px', marginBottom: '24px' }}>Twoje urządzenia</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+              {sensors.map(sensor => {
+                const plant = gardens.flatMap(g => g.plants || []).find(p => p.id === sensor.plantId);
+                const garden = gardens.find(g => g.plants?.some(p => p.id === sensor.plantId));
+
+                return (
+                  <div key={`sensor-${sensor.id}`} style={{
+                    backgroundColor: 'var(--color-canvas)',
+                    padding: '24px',
+                    borderRadius: 'var(--rounded-xl)',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                  }}>
+                    <h4 style={{ fontSize: '18px', marginBottom: '24px', color: 'var(--color-primary-active)' }}>daisySensor</h4>
+                    <XiaoEsp32 />
+                    
+                    <div style={{ marginTop: '24px', width: '100%' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <span style={{ color: 'var(--color-mute)', fontSize: '14px' }}>MAC Adres:</span>
+                        <strong style={{ fontSize: '14px' }}>{sensor.macAddress}</strong>
+                      </div>
+                      
+                      {plant && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                          <span style={{ color: 'var(--color-mute)', fontSize: '14px' }}>Roślina:</span>
+                          <strong style={{ fontSize: '14px' }}>{plant.plantName}</strong>
+                        </div>
+                      )}
+                      
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                        <span style={{ color: 'var(--color-mute)', fontSize: '14px' }}>Bateria:</span>
+                        <strong style={{ fontSize: '14px', color: '#10b981' }}>85%</strong>
+                      </div>
+
+                      <div style={{ 
+                        width: '100%', 
+                        height: '8px', 
+                        backgroundColor: '#e2e8f0', 
+                        borderRadius: '4px',
+                        overflow: 'hidden'
+                      }}>
+                        <div style={{ 
+                          width: '85%', 
+                          height: '100%', 
+                          backgroundColor: '#10b981',
+                          borderRadius: '4px'
+                        }}></div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {headUnits.map(unit => {
+                const garden = gardens.find(g => g.id === unit.gardenId);
+                
+                return (
+                  <div key={`headunit-${unit.id}`} style={{
+                    backgroundColor: 'var(--color-canvas)',
+                    padding: '24px',
+                    borderRadius: 'var(--rounded-xl)',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                  }}>
+                    <h4 style={{ fontSize: '18px', marginBottom: '24px', color: '#3b82f6' }}>daisyHeadUnit</h4>
+                    <EspDevboard />
+                    
+                    <div style={{ marginTop: '24px', width: '100%' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <span style={{ color: 'var(--color-mute)', fontSize: '14px' }}>MAC Adres:</span>
+                        <strong style={{ fontSize: '14px' }}>{unit.macAddress}</strong>
+                      </div>
+
+                      {garden && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                          <span style={{ color: 'var(--color-mute)', fontSize: '14px' }}>Ogród:</span>
+                          <strong style={{ fontSize: '14px' }}>{garden.gardenName}</strong>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       <DeviceAssignModal

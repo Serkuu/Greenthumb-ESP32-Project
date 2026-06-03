@@ -157,7 +157,7 @@ function GardenView() {
             <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
               <div>
                 <p style={{ color: 'var(--color-primary-active)', fontWeight: '600' }}>
-                  Baza Główna (ESP32) sparowana: {garden.headUnit.macAddress}
+                  daisyHeadUnit sparowana: {garden.headUnit.macAddress}
                 </p>
                 <div style={{ display: 'flex', gap: '24px', marginTop: '16px' }}>
                   <div style={{ padding: '16px', backgroundColor: 'var(--color-canvas-soft)', borderRadius: 'var(--rounded-md)', minWidth: '120px' }}>
