@@ -50,7 +50,26 @@ function EspDevboard() {
       <div className="esp-led-label d2">D2</div>
       <div className="esp-led-d2"></div>
 
-      <div className="esp-cp2102"></div>
+      <div className="esp-components-area">
+        <div className="esp-chip-ch340">
+          <div className="esp-chip-dot"></div>
+        </div>
+        <div className="esp-ams1117">
+          <div className="esp-ams-tab"></div>
+          <div className="esp-ams-body"></div>
+          <div className="esp-ams-pins">
+            <div className="esp-ams-pin"></div>
+            <div className="esp-ams-pin"></div>
+            <div className="esp-ams-pin"></div>
+          </div>
+        </div>
+
+        <div className="esp-smd-cap cap1"></div>
+        <div className="esp-smd-cap cap2"></div>
+        <div className="esp-smd-res res1"></div>
+        <div className="esp-smd-res res2"></div>
+        <div className="esp-smd-res res3"></div>
+      </div>
 
       <div className="esp-button en">
         <div className="esp-button-inner"></div>

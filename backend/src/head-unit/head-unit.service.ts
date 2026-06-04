@@ -28,7 +28,8 @@ export class HeadUnitService {
 
   findAll(userId: number) {
     return this.prisma.headUnit.findMany({
-      where: { userId }
+      where: { userId },
+      include: { garden: true }
     });
   }
 
@@ -65,8 +66,36 @@ export class HeadUnitService {
     });
     if (!headUnit) throw new ForbiddenException("This head unit does not exist or does not belong to you.");
 
+    await this.prisma.environmentHistory.deleteMany({
+      where: { headUnitId: id }
+    });
+
     return this.prisma.headUnit.delete({
       where: { id }
+    });
+  }
+
+  async getHistory(id: number, userId: number, period: string) {
+    const headUnit = await this.prisma.headUnit.findFirst({
+      where: { id, userId }
+    });
+    if (!headUnit) throw new ForbiddenException("This head unit does not exist or does not belong to you.");
+
+    const now = new Date();
+    let startDate = new Date();
+
+    if (period === '1h') startDate.setHours(now.getHours() - 1);
+    else if (period === '1d') startDate.setDate(now.getDate() - 1);
+    else if (period === '1w') startDate.setDate(now.getDate() - 7);
+    else if (period === '1m') startDate.setMonth(now.getMonth() - 1);
+    else startDate.setDate(now.getDate() - 1); // default to 1 day
+
+    return this.prisma.environmentHistory.findMany({
+      where: {
+        headUnitId: id,
+        createdAt: { gte: startDate }
+      },
+      orderBy: { createdAt: 'asc' }
     });
   }
 

@@ -7,6 +7,10 @@ import AddPlant from './pages/AddPlant';
 import AddGarden from './pages/AddGarden';
 import GardenView from './pages/GardenView';
 import PlantView from './pages/PlantView';
+import Hardware from './pages/Hardware';
+import ChartsHistory from './pages/ChartsHistory';
+
+import Layout from './components/Layout';
 
 function App() {
   return (
@@ -15,11 +19,13 @@ function App() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/add-plant" element={<AddPlant />} />
-        <Route path="/add-garden" element={<AddGarden />} />
-        <Route path="/garden/:id" element={<GardenView />} />
-        <Route path="/plant/:id" element={<PlantView />} />
+        <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+        <Route path="/add-plant" element={<Layout><AddPlant /></Layout>} />
+        <Route path="/add-garden" element={<Layout><AddGarden /></Layout>} />
+        <Route path="/garden/:id" element={<Layout><GardenView /></Layout>} />
+        <Route path="/plant/:id" element={<Layout><PlantView /></Layout>} />
+        <Route path="/hardware" element={<Layout><Hardware /></Layout>} />
+        <Route path="/history" element={<Layout><ChartsHistory /></Layout>} />
       </Routes>
     </BrowserRouter>
   );

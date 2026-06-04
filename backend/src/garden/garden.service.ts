@@ -82,4 +82,38 @@ export class GardenService {
       }
     })
   }
+
+  async toggleFavorite(id: number, userId: number) {
+    const garden = await this.prisma.garden.findFirst({
+      where: {
+        id,
+        userId
+      }
+    });
+    if (!garden) {
+      throw new NotFoundException("Garden not found or access denied");
+    }
+
+    const newStatus = !garden.isFavorite;
+
+    if (newStatus) {
+      await this.prisma.$transaction([
+        this.prisma.garden.updateMany({
+          where: { userId },
+          data: { isFavorite: false }
+        }),
+        this.prisma.garden.update({
+          where: { id },
+          data: { isFavorite: true }
+        })
+      ]);
+    } else {
+      await this.prisma.garden.update({
+        where: { id },
+        data: { isFavorite: false }
+      });
+    }
+
+    return { success: true, isFavorite: newStatus };
+  }
 }

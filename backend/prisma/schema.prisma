@@ -29,6 +29,7 @@ model Garden {
   userId     Int       
   plants     Plant[]
   headUnit   HeadUnit?
+  isFavorite Boolean   @default(false)
 }
 
 model Plant {

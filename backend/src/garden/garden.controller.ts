@@ -35,4 +35,9 @@ export class GardenController {
   remove(@Param('id') id: string, @GetUser('userId') userId: number) {
     return this.gardenService.remove(+id, userId);
   }
+
+  @Patch(':id/favorite')
+  toggleFavorite(@Param('id') id: string, @GetUser('userId') userId: number) {
+    return this.gardenService.toggleFavorite(+id, userId);
+  }
 }

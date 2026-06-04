@@ -240,17 +240,120 @@
   right: 24px;
 }
 
-.esp-cp2102 {
+.esp-components-area {
   position: absolute;
-  bottom: 60px;
-  width: 24px;
-  height: 24px;
-  background-color: #111827;
-  border-radius: 2px;
+  bottom: 45px;
+  width: 50px;
+  height: 60px;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+}
+
+.esp-chip-ch340 {
+  position: absolute;
+  bottom: 10px;
+  width: 14px;
+  height: 14px;
+  background-color: #111827;
+  border-radius: 1px;
   border: 1px solid #374151;
+}
+
+.esp-chip-dot {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 2px;
+  height: 2px;
+  background-color: #4b5563;
+  border-radius: 50%;
+}
+
+.esp-ams1117 {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 14px;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.esp-ams-tab {
+  width: 8px;
+  height: 4px;
+  background-color: #9ca3af;
+  border-radius: 1px 1px 0 0;
+}
+
+.esp-ams-body {
+  width: 14px;
+  height: 12px;
+  background-color: #111827;
+  border-radius: 1px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.esp-ams-pins {
+  display: flex;
+  gap: 2px;
+  margin-top: -1px;
+}
+
+.esp-ams-pin {
+  width: 2px;
+  height: 4px;
+  background-color: #9ca3af;
+  border-radius: 0 0 1px 1px;
+}
+
+.esp-smd-cap {
+  position: absolute;
+  width: 3px;
+  height: 6px;
+  background-color: #d97706;
+  border-top: 1px solid #fcd34d;
+  border-bottom: 1px solid #fcd34d;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+.esp-smd-cap.cap1 {
+  top: 10px;
+  right: 8px;
+}
+
+.esp-smd-cap.cap2 {
+  top: 20px;
+  right: 12px;
+  transform: rotate(90deg);
+}
+
+.esp-smd-res {
+  position: absolute;
+  width: 2px;
+  height: 4px;
+  background-color: #111827;
+  border-top: 1px solid #9ca3af;
+  border-bottom: 1px solid #9ca3af;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+.esp-smd-res.res1 {
+  bottom: 15px;
+  left: 2px;
+}
+
+.esp-smd-res.res2 {
+  bottom: 20px;
+  left: -2px;
+  transform: rotate(90deg);
+}
+
+.esp-smd-res.res3 {
+  bottom: 5px;
+  right: 5px;
 }
 
 .esp-led-pwr {

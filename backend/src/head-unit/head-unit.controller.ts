@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { HeadUnitService } from './head-unit.service';
 import { CreateHeadUnitDto } from './dto/create-head-unit.dto';
 import { UpdateHeadUnitDto } from './dto/update-head-unit.dto';
-import { UseGuards } from '@nestjs/common';
 import { JwtGuard } from '../auth/guard/jwt.guard';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { ApiKeyGuard } from '../auth/guard/api-key/api-key.guard';
@@ -42,10 +41,15 @@ export class HeadUnitController {
     return this.headUnitService.remove(+id, userId);
   }
 
+  @UseGuards(JwtGuard)
+  @Get(':id/history')
+  getHistory(@Param('id') id: string, @Query('period') period: string, @GetUser('userId') userId: number) {
+    return this.headUnitService.getHistory(+id, userId, period);
+  }
+
   @UseGuards(ApiKeyGuard)
   @Post('telemetry')
   saveTelemetry(@Body() telemetryPingDto: TelemetryPingDto) {
     return this.headUnitService.saveTelemetry(telemetryPingDto);
   }
-
 }

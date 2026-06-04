@@ -68,9 +68,12 @@ function Register() {
         maxWidth: '450px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
       }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <img src="/daisy.svg" alt="logo" style={{ height: '64px' }} />
+        </div>
         <h1 style={{ fontSize: '40px', marginBottom: '8px', textAlign: 'center' }}>Dołącz do nas</h1>
         <p style={{ color: 'var(--color-mute)', textAlign: 'center', marginBottom: '32px', fontSize: '16px' }}>
-          Stwórz konto, by dodać swój pierwszy ogród.
+          Stwórz konto, by Twoje rośliny przeżyły każdą sytuację.
         </p>
 
         {error && (

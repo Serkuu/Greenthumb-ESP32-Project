@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { SensorService } from './sensor.service';
 import { CreateSensorDto } from './dto/create-sensor.dto';
 import { UpdateSensorDto } from './dto/update-sensor.dto';
@@ -43,6 +43,12 @@ export class SensorController {
   @Delete(':id')
   remove(@Param('id') id: string, @GetUser('userId') userId: number) {
     return this.sensorService.remove(+id, userId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get(':id/history')
+  getHistory(@Param('id') id: string, @Query('period') period: string, @GetUser('userId') userId: number) {
+    return this.sensorService.getHistory(+id, userId, period);
   }
 
   @UseGuards(ApiKeyGuard)

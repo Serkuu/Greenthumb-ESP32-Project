@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
+import ConfirmModal from '../components/ConfirmModal';
 import { WateringCanIcon, CalendarIcon, CrossIcon } from '../components/Icons';
 
 function PlantView() {
@@ -9,6 +10,8 @@ function PlantView() {
   const [plant, setPlant] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [alertModalOpen, setAlertModalOpen] = useState(false);
 
   const [liveData, setLiveData] = useState({ moist: null, macAddress: null });
   const dateInputRef = useRef(null);
@@ -72,11 +75,12 @@ function PlantView() {
     };
   }, [fetchPlantDetails]);
 
-  const handleDeletePlant = async () => {
-    if (!window.confirm('Czy na pewno chcesz usunąć tę roślinę?')) {
-      return;
-    }
+  const handleDeletePlantClick = () => {
+    setDeleteModalOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    setDeleteModalOpen(false);
     const token = localStorage.getItem('access_token');
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3000'}/plant/${id}`, {
@@ -177,7 +181,7 @@ function PlantView() {
         </div>
         <div style={{ display: 'flex', gap: '16px' }}>
           <Button variant="secondary" onClick={() => navigate(-1)}>Wróć</Button>
-          <Button variant="danger" onClick={handleDeletePlant}>Usuń roślinę</Button>
+          <Button variant="danger" onClick={handleDeletePlantClick}>Usuń roślinę</Button>
         </div>
       </div>
 
@@ -251,12 +255,12 @@ function PlantView() {
                         if (dateInputRef.current && typeof dateInputRef.current.showPicker === 'function') {
                           dateInputRef.current.showPicker();
                         } else {
-                          alert("Twoja przeglądarka nie obsługuje automatycznego otwierania kalendarza.");
+                          setAlertModalOpen(true);
                         }
                       }}
                       style={{
                         width: '64px', height: '64px', borderRadius: '50%', border: 'none',
-                        backgroundColor: '#f59e0b', color: '#fff', fontSize: '24px',
+                        backgroundColor: 'var(--color-primary)', color: '#fff', fontSize: '24px',
                         display: 'flex', justifyContent: 'center', alignItems: 'center',
                         cursor: 'pointer', boxShadow: '0 4px 10px rgba(245, 158, 11, 0.3)'
                       }}
@@ -354,6 +358,23 @@ function PlantView() {
           )}
         </div>
       </div>
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        title="Usuń roślinę"
+        message="Czy na pewno chcesz usunąć tę roślinę? Tej operacji nie można cofnąć."
+        confirmText="Usuń"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteModalOpen(false)}
+      />
+
+      <ConfirmModal
+        isOpen={alertModalOpen}
+        title="Brak obsługi kalendarza"
+        message="Twoja przeglądarka nie obsługuje automatycznego otwierania kalendarza. Wybierz datę ręcznie."
+        isAlertOnly={true}
+        confirmText="Zrozumiałem"
+        onConfirm={() => setAlertModalOpen(false)}
+      />
     </div>
   );
 }

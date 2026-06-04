@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
+import ConfirmModal from '../components/ConfirmModal';
+import { Thermometer, Droplets, Wifi, WifiOff } from 'lucide-react';
 
 function GardenView() {
   const { id } = useParams();
@@ -8,6 +10,7 @@ function GardenView() {
   const [garden, setGarden] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const [liveData, setLiveData] = useState({ temp: null, moist: null });
 
@@ -71,11 +74,12 @@ function GardenView() {
     };
   }, [fetchGardenDetails]);
 
-  const handleDeleteGarden = async () => {
-    if (!window.confirm('Czy na pewno chcesz usunąć ten ogród? Rośliny zostaną zachowane bez przypisanego miejsca.')) {
-      return;
-    }
+  const handleDeleteGardenClick = () => {
+    setDeleteModalOpen(true);
+  };
 
+  const handleConfirmDelete = async () => {
+    setDeleteModalOpen(false);
     const token = localStorage.getItem('access_token');
     try {
       const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:3000'}/garden/${id}`, {
@@ -130,54 +134,48 @@ function GardenView() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
           <h1 style={{ fontSize: '32px', marginBottom: '8px' }}>{garden.gardenName}</h1>
-          <p style={{ color: 'var(--color-mute)', fontSize: '16px' }}>
-            {garden.plants?.length || 0} roślin w tym ogrodzie
-          </p>
         </div>
         <div style={{ display: 'flex', gap: '16px' }}>
           <Button variant="secondary" onClick={() => navigate('/dashboard')}>Wróć</Button>
           <Button onClick={() => navigate('/add-plant')}>Dodaj roślinę</Button>
-          <Button variant="danger" onClick={handleDeleteGarden}>Usuń ogród</Button>
+          <Button variant="danger" onClick={handleDeleteGardenClick}>Usuń ogród</Button>
         </div>
       </div>
 
-      <div style={{
-        backgroundColor: 'var(--color-canvas)',
-        padding: '24px',
-        borderRadius: 'var(--rounded-xl)',
-        marginBottom: '32px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center'
-      }}>
+      <div style={{ marginBottom: '32px' }}>
         <div>
-          <h2 style={{ fontSize: '20px', marginBottom: '8px' }}>Sprzęt i Sensoryka</h2>
           {garden.headUnit ? (
-            <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-              <div>
-                <p style={{ color: 'var(--color-primary-active)', fontWeight: '600' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                <p style={{ color: 'var(--color-primary-active)', fontWeight: '600', fontSize: '16px' }}>
                   daisyHeadUnit sparowana: {garden.headUnit.macAddress}
                 </p>
-                <div style={{ display: 'flex', gap: '24px', marginTop: '16px' }}>
-                  <div style={{ padding: '16px', backgroundColor: 'var(--color-canvas-soft)', borderRadius: 'var(--rounded-md)', minWidth: '120px' }}>
-                    <span style={{ fontSize: '14px', color: 'var(--color-mute)', display: 'block', marginBottom: '4px' }}>Temperatura</span>
-                    <span style={{ fontSize: '28px', fontWeight: '800', color: 'var(--color-ink)' }}>
-                      {liveData.macAddress === garden.headUnit.macAddress && liveData.temp !== null ? `${liveData.temp.toFixed(1)}°C` : '--°C'}
-                    </span>
-                  </div>
-                  <div style={{ padding: '16px', backgroundColor: 'var(--color-canvas-soft)', borderRadius: 'var(--rounded-md)', minWidth: '120px' }}>
-                    <span style={{ fontSize: '14px', color: 'var(--color-mute)', display: 'block', marginBottom: '4px' }}>Wilgotność pow.</span>
-                    <span style={{ fontSize: '28px', fontWeight: '800', color: 'var(--color-ink)' }}>
-                      {liveData.macAddress === garden.headUnit.macAddress && liveData.moist !== null ? `${liveData.moist}%` : '--%'}
-                    </span>
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: 'var(--rounded-pill)', backgroundColor: liveData.macAddress === garden.headUnit.macAddress ? 'var(--color-primary-pale)' : 'var(--color-canvas)', color: liveData.macAddress === garden.headUnit.macAddress ? 'var(--color-positive-deep)' : 'var(--color-mute)', fontSize: '12px', fontWeight: 'bold' }}>
+                  {liveData.macAddress === garden.headUnit.macAddress ? <Wifi size={14} /> : <WifiOff size={14} />}
+                  {liveData.macAddress === garden.headUnit.macAddress ? 'LIVE' : 'Brak połączenia'}
                 </div>
               </div>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
+                <div className="glass-card" style={{ padding: '32px', display: 'flex', alignItems: 'center', gap: '24px' }}>
+                  <div style={{ width: '64px', height: '64px', borderRadius: '16px', backgroundColor: '#ffedd5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c2410c' }}>
+                    <Thermometer size={32} />
+                  </div>
+                  <div>
+                    <p style={{ color: 'var(--color-mute)', fontSize: '14px', marginBottom: '4px' }}>Temperatura</p>
+                    <p style={{ fontSize: '36px', fontWeight: '800' }}>{liveData.macAddress === garden.headUnit.macAddress && liveData.temp !== null ? `${liveData.temp.toFixed(1)}°C` : '--°C'}</p>
+                  </div>
+                </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: 'var(--rounded-pill)', backgroundColor: liveData.macAddress === garden.headUnit.macAddress ? 'var(--color-positive-deep)' : 'var(--color-mute)', color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
-                <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: liveData.macAddress === garden.headUnit.macAddress ? '#4ade80' : '#ccc', boxShadow: liveData.macAddress === garden.headUnit.macAddress ? '0 0 10px #4ade80' : 'none' }}></div>
-                {liveData.macAddress === garden.headUnit.macAddress ? 'LIVE' : 'Brak połączenia'}
+                <div className="glass-card" style={{ padding: '32px', display: 'flex', alignItems: 'center', gap: '24px' }}>
+                  <div style={{ width: '64px', height: '64px', borderRadius: '16px', backgroundColor: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0369a1' }}>
+                    <Droplets size={32} />
+                  </div>
+                  <div>
+                    <p style={{ color: 'var(--color-mute)', fontSize: '14px', marginBottom: '4px' }}>Wilgotność pow.</p>
+                    <p style={{ fontSize: '36px', fontWeight: '800' }}>{liveData.macAddress === garden.headUnit.macAddress && liveData.moist !== null ? `${liveData.moist}%` : '--%'}</p>
+                  </div>
+                </div>
               </div>
             </div>
           ) : (
@@ -249,6 +247,14 @@ function GardenView() {
           ))}
         </div>
       )}
+      <ConfirmModal
+        isOpen={deleteModalOpen}
+        title="Usuń ogród"
+        message="Czy na pewno chcesz usunąć ten ogród? Znajdujące się w nim rośliny zostaną zachowane bez przypisanego miejsca."
+        confirmText="Usuń"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteModalOpen(false)}
+      />
     </div>
   );
 }
