@@ -340,7 +340,15 @@ function PlantView() {
       }}>
         <div>
           <h2 style={{ fontSize: '20px', marginBottom: '8px' }}>Sprzęt i Sensoryka</h2>
-          {plant.sensor ? (
+          {plant.sensor ? (() => {
+            const sensorHistory = plant.sensor.history?.[0];
+            const isSensorLive = (liveData.macAddress === plant.sensor.macAddress) || 
+                                 (sensorHistory && (new Date() - new Date(sensorHistory.createdAt) < 60 * 60 * 1000));
+            const displayMoist = (liveData.macAddress === plant.sensor.macAddress && liveData.moist !== null) 
+                                  ? liveData.moist 
+                                  : (sensorHistory ? sensorHistory.moistureLevel : '--');
+
+            return (
             <div style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
               <div>
                 <p style={{ color: 'var(--color-primary-active)', fontWeight: '600' }}>
@@ -350,18 +358,19 @@ function PlantView() {
                   <div style={{ padding: '16px', backgroundColor: 'var(--color-canvas-soft)', borderRadius: 'var(--rounded-md)', minWidth: '120px' }}>
                     <span style={{ fontSize: '14px', color: 'var(--color-mute)', display: 'block', marginBottom: '4px' }}>Wilgotność gleby</span>
                     <span style={{ fontSize: '28px', fontWeight: '800', color: 'var(--color-ink)' }}>
-                      {liveData.macAddress === plant.sensor.macAddress && liveData.moist !== null ? `${liveData.moist}%` : '--%'}
+                      {displayMoist}%
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: 'var(--rounded-pill)', backgroundColor: liveData.macAddress === plant.sensor.macAddress ? 'var(--color-positive-deep)' : 'var(--color-mute)', color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
-                <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: liveData.macAddress === plant.sensor.macAddress ? '#4ade80' : '#ccc', boxShadow: liveData.macAddress === plant.sensor.macAddress ? '0 0 10px #4ade80' : 'none' }}></div>
-                {liveData.macAddress === plant.sensor.macAddress ? 'LIVE' : 'Brak połączenia'}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: 'var(--rounded-pill)', backgroundColor: isSensorLive ? 'var(--color-positive-deep)' : 'var(--color-mute)', color: '#fff', fontSize: '14px', fontWeight: 'bold' }}>
+                <div style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: isSensorLive ? '#4ade80' : '#ccc', boxShadow: isSensorLive ? '0 0 10px #4ade80' : 'none' }}></div>
+                {isSensorLive ? 'LIVE' : 'Brak połączenia'}
               </div>
             </div>
-          ) : (
+            );
+          })() : (
             <p style={{ color: 'var(--color-mute)', fontSize: '16px' }}>
               Brak sparowanego czujnika daisySensor dla tej rośliny
             </p>

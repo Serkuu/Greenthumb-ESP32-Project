@@ -22,8 +22,12 @@ export class GardenService {
         userId
       },
       include: {
-        plants: true,
-        headUnit: true
+        plants: {
+          include: {
+            sensor: { include: { history: { orderBy: { createdAt: 'desc' }, take: 1 } } }
+          }
+        },
+        headUnit: { include: { history: { orderBy: { createdAt: 'desc' }, take: 1 } } }
       }
     })
   }
@@ -35,8 +39,12 @@ export class GardenService {
         userId
       },
       include: {
-        plants: true,
-        headUnit: true
+        plants: {
+          include: {
+            sensor: { include: { history: { orderBy: { createdAt: 'desc' }, take: 1 } } }
+          }
+        },
+        headUnit: { include: { history: { orderBy: { createdAt: 'desc' }, take: 1 } } }
       }
     })
   }

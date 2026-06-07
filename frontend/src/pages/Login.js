@@ -52,8 +52,9 @@ function Login() {
         maxWidth: '450px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <img src="/daisy.svg" alt="logo" style={{ height: '64px' }} />
+        <div style={{ textAlign: 'center', marginBottom: '24px', display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '48px', color: 'var(--color-ink-deep)' }}>
+          <span style={{ fontFamily: 'Pally, sans-serif' }}>daisy</span>
+          <img src="/daisy.svg" alt="logo" style={{ height: '54px', marginLeft: '12px' }} />
         </div>
         <h1 style={{ fontSize: '40px', marginBottom: '8px', textAlign: 'center' }}>Witaj z powrotem</h1>
         <p style={{ color: 'var(--color-mute)', textAlign: 'center', marginBottom: '40px', fontSize: '16px' }}>

@@ -144,15 +144,26 @@ function GardenView() {
 
       <div style={{ marginBottom: '32px' }}>
         <div>
-          {garden.headUnit ? (
+          {garden.headUnit ? (() => {
+            const headUnitHistory = garden.headUnit.history?.[0];
+            const isHeadUnitLive = (liveData.macAddress === garden.headUnit.macAddress) || 
+                                   (headUnitHistory && (new Date() - new Date(headUnitHistory.createdAt) < 60 * 1000));
+            const displayTemp = (liveData.macAddress === garden.headUnit.macAddress && liveData.temp !== null) 
+                                ? liveData.temp 
+                                : (headUnitHistory ? headUnitHistory.tempLevel : null);
+            const displayMoist = (liveData.macAddress === garden.headUnit.macAddress && liveData.moist !== null) 
+                                 ? liveData.moist 
+                                 : (headUnitHistory ? headUnitHistory.moistLevel : null);
+
+            return (
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                 <p style={{ color: 'var(--color-primary-active)', fontWeight: '600', fontSize: '16px' }}>
                   daisyHeadUnit sparowana: {garden.headUnit.macAddress}
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: 'var(--rounded-pill)', backgroundColor: liveData.macAddress === garden.headUnit.macAddress ? 'var(--color-primary-pale)' : 'var(--color-canvas)', color: liveData.macAddress === garden.headUnit.macAddress ? 'var(--color-positive-deep)' : 'var(--color-mute)', fontSize: '12px', fontWeight: 'bold' }}>
-                  {liveData.macAddress === garden.headUnit.macAddress ? <Wifi size={14} /> : <WifiOff size={14} />}
-                  {liveData.macAddress === garden.headUnit.macAddress ? 'LIVE' : 'Brak połączenia'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 12px', borderRadius: 'var(--rounded-pill)', backgroundColor: isHeadUnitLive ? 'var(--color-primary-pale)' : 'var(--color-canvas)', color: isHeadUnitLive ? 'var(--color-positive-deep)' : 'var(--color-mute)', fontSize: '12px', fontWeight: 'bold' }}>
+                  {isHeadUnitLive ? <Wifi size={14} /> : <WifiOff size={14} />}
+                  {isHeadUnitLive ? 'LIVE' : 'Brak połączenia'}
                 </div>
               </div>
               
@@ -163,7 +174,7 @@ function GardenView() {
                   </div>
                   <div>
                     <p style={{ color: 'var(--color-mute)', fontSize: '14px', marginBottom: '4px' }}>Temperatura</p>
-                    <p style={{ fontSize: '36px', fontWeight: '800' }}>{liveData.macAddress === garden.headUnit.macAddress && liveData.temp !== null ? `${liveData.temp.toFixed(1)}°C` : '--°C'}</p>
+                    <p style={{ fontSize: '36px', fontWeight: '800' }}>{displayTemp !== null ? `${displayTemp.toFixed(1)}°C` : '--°C'}</p>
                   </div>
                 </div>
 
@@ -173,12 +184,13 @@ function GardenView() {
                   </div>
                   <div>
                     <p style={{ color: 'var(--color-mute)', fontSize: '14px', marginBottom: '4px' }}>Wilgotność pow.</p>
-                    <p style={{ fontSize: '36px', fontWeight: '800' }}>{liveData.macAddress === garden.headUnit.macAddress && liveData.moist !== null ? `${liveData.moist}%` : '--%'}</p>
+                    <p style={{ fontSize: '36px', fontWeight: '800' }}>{displayMoist !== null ? `${displayMoist}%` : '--%'}</p>
                   </div>
                 </div>
               </div>
             </div>
-          ) : (
+            );
+          })() : (
             <p style={{ color: 'var(--color-mute)', fontSize: '16px' }}>
               Brak sparowanego daisyHeadUnit dla tego ogrodu
             </p>

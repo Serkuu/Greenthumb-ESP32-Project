@@ -12,7 +12,7 @@ function Sidebar() {
     <aside className="sidebar-container">
       <div style={{ marginBottom: 'var(--spacing-3xl)', padding: '0 var(--spacing-sm)' }}>
         <h2 style={{ color: 'var(--color-ink-deep)', fontSize: '28px', display: 'flex', alignItems: 'center' }}>
-          daisy<img src="/daisy.svg" alt="logo" style={{ height: '32px', marginLeft: '6px' }} />
+          <span style={{ fontFamily: 'Pally, sans-serif' }}>daisy</span><img src="/daisy.svg" alt="logo" style={{ height: '32px', marginLeft: '6px' }} />
         </h2>
       </div>
 

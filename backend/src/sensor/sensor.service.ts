@@ -30,13 +30,20 @@ export class SensorService {
   findAll(userId: number) {
     return this.prisma.moistureSensor.findMany({
       where: { userId },
-      include: { plant: true }
+      include: { 
+        plant: true,
+        history: { orderBy: { createdAt: 'desc' }, take: 1 }
+      }
     });
   }
 
   async findOne(id: number, userId: number) {
     const sensor = await this.prisma.moistureSensor.findFirst({
-      where: { id, userId }
+      where: { id, userId },
+      include: {
+        plant: true,
+        history: { orderBy: { createdAt: 'desc' }, take: 1 }
+      }
     });
     if (!sensor) throw new ForbiddenException("This sensor does not exist or does not belong to you.");
     return sensor;

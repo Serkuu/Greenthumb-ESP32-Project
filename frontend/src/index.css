@@ -1,6 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&family=Outfit:wght@400;600&display=swap');
 
-:root {
+@font-face {
+  font-family: 'Pally';
+  src: url('./Pally-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}:root {
   /* Main colors */
   --color-primary: #7FB77E;
   --color-on-primary: #0c0c0c;

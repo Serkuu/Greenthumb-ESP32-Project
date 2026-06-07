@@ -37,7 +37,7 @@ export class PlantService {
         userId
       },
       include: {
-        sensor: true
+        sensor: { include: { history: { orderBy: { createdAt: 'desc' }, take: 1 } } }
       }
     })
   }
@@ -49,7 +49,7 @@ export class PlantService {
         userId
       },
       include: {
-        sensor: true
+        sensor: { include: { history: { orderBy: { createdAt: 'desc' }, take: 1 } } }
       }
     });
   }

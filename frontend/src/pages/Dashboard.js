@@ -106,8 +106,17 @@ function Dashboard() {
 
   const favoriteGarden = gardens.find(g => g.isFavorite);
   const totalPlants = gardens.reduce((acc, g) => acc + (g.plants?.length || 0), 0);
-  const isLive = favoriteGarden?.headUnit && liveData.macAddress === favoriteGarden.headUnit.macAddress;
-
+  const headUnitHistory = favoriteGarden?.headUnit?.history?.[0];
+  const isLive = favoriteGarden?.headUnit && (
+    (liveData.macAddress === favoriteGarden.headUnit.macAddress) ||
+    (headUnitHistory && (new Date() - new Date(headUnitHistory.createdAt) < 60 * 1000))
+  );
+  const displayTemp = (liveData.macAddress === favoriteGarden?.headUnit?.macAddress && liveData.temp !== null)
+    ? liveData.temp
+    : (headUnitHistory ? headUnitHistory.tempLevel : null);
+  const displayMoist = (liveData.macAddress === favoriteGarden?.headUnit?.macAddress && liveData.moist !== null)
+    ? liveData.moist
+    : (headUnitHistory ? headUnitHistory.moistLevel : null);
   if (loading) {
     return <p style={{ color: 'var(--color-mute)', fontSize: '18px' }}>Wczytywanie...</p>;
   }
@@ -156,7 +165,7 @@ function Dashboard() {
                   {isLive ? 'LIVE' : 'Brak połączenia'}
                 </div>
               </div>
-              <Button variant="secondary" onClick={() => navigate(`/garden/${favoriteGarden.id}`)} style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: 'var(--color-canvas)', border: '1px solid rgba(0,0,0,0.1)' }}>
+              <Button variant="secondary" onClick={() => navigate(`/add-plant`)} style={{ display: 'flex', alignItems: 'center', gap: '8px', backgroundColor: 'var(--color-canvas)', border: '1px solid rgba(0,0,0,0.1)' }}>
                 <Plus size={16} /> Dodaj roślinę
               </Button>
             </div>
@@ -166,20 +175,20 @@ function Dashboard() {
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', backgroundColor: '#ffedd5', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#c2410c' }}>
                   <Thermometer size={32} />
                 </div>
-                <div>
-                  <p style={{ color: 'var(--color-mute)', fontSize: '14px', marginBottom: '4px' }}>Temperatura</p>
-                  <p style={{ fontSize: '36px', fontWeight: '800' }}>{isLive && liveData.temp !== null ? `${liveData.temp.toFixed(1)}°C` : '--°C'}</p>
-                </div>
+                  <div>
+                    <p style={{ color: 'var(--color-mute)', fontSize: '14px', marginBottom: '4px' }}>Temperatura</p>
+                    <p style={{ fontSize: '36px', fontWeight: '800' }}>{displayTemp !== null ? `${displayTemp.toFixed(1)}°C` : '--°C'}</p>
+                  </div>
               </div>
 
               <div className="glass-card" style={{ padding: '32px', display: 'flex', alignItems: 'center', gap: '24px' }}>
                 <div style={{ width: '64px', height: '64px', borderRadius: '16px', backgroundColor: '#e0f2fe', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0369a1' }}>
                   <Droplets size={32} />
                 </div>
-                <div>
-                  <p style={{ color: 'var(--color-mute)', fontSize: '14px', marginBottom: '4px' }}>Wilgotność powietrza</p>
-                  <p style={{ fontSize: '36px', fontWeight: '800' }}>{isLive && liveData.moist !== null ? `${liveData.moist}%` : '--%'}</p>
-                </div>
+                  <div>
+                    <p style={{ color: 'var(--color-mute)', fontSize: '14px', marginBottom: '4px' }}>Wilgotność pow.</p>
+                    <p style={{ fontSize: '36px', fontWeight: '800' }}>{displayMoist !== null ? `${displayMoist}%` : '--%'}</p>
+                  </div>
               </div>
             </div>
 

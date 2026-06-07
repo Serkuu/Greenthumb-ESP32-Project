@@ -29,13 +29,20 @@ export class HeadUnitService {
   findAll(userId: number) {
     return this.prisma.headUnit.findMany({
       where: { userId },
-      include: { garden: true }
+      include: { 
+        garden: true,
+        history: { orderBy: { createdAt: 'desc' }, take: 1 }
+      }
     });
   }
 
   async findOne(id: number, userId: number) {
     const headUnit = await this.prisma.headUnit.findFirst({
-      where: { id, userId }
+      where: { id, userId },
+      include: {
+        garden: true,
+        history: { orderBy: { createdAt: 'desc' }, take: 1 }
+      }
     });
     if (!headUnit) throw new ForbiddenException("This head unit does not exist or does not belong to you.");
     return headUnit;
